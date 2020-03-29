@@ -8,7 +8,7 @@ from flask import Flask, redirect, url_for
 from flask_dance.contrib.google import make_google_blueprint, google
 
 app = Flask(__name__)
-app.secret_key = "supersekrit"
+app.secret_key = APP_SECRET
 blueprint = make_google_blueprint(
     client_id = GOOGLE_CLIENT_ID,
     client_secret = GOOGLE_CLIENT_SECRET,
