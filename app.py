@@ -1,4 +1,6 @@
-import os 
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 GOOGLE_CLIENT_ID = os.environ["GOOGLE_CLIENT_ID"]
 GOOGLE_CLIENT_SECRET = os.environ["GOOGLE_CLIENT_SECRET"]
@@ -12,7 +14,7 @@ app.secret_key = APP_SECRET
 blueprint = make_google_blueprint(
     client_id = GOOGLE_CLIENT_ID,
     client_secret = GOOGLE_CLIENT_SECRET,
-    scope = ["profile", "email"]
+    scope = "https://www.googleapis.com/auth/userinfo.profile openid https://www.googleapis.com/auth/userinfo.email"
 )
 app.register_blueprint(blueprint, url_prefix = "/login")
 

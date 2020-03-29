@@ -1,2 +1,3 @@
 Flask==1.1.1
 flask_dance==3.0.0
+python-dotenv==0.12.0
