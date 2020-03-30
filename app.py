@@ -26,7 +26,9 @@ load_dotenv()
 GOOGLE_CLIENT_ID = os.environ["GOOGLE_CLIENT_ID"]
 GOOGLE_CLIENT_SECRET = os.environ["GOOGLE_CLIENT_SECRET"]
 APP_SECRET = os.environ["APP_SECRET"]
-DB_URI = os.environ["DB_URI"]
+DB_USER = os.environ["DB_USER"]
+DB_PASS = os.environ["DB_PASS"]
+DB_IP = os.environ["DB_IP"]
 MAPS_KEY = os.environ["MAPS_KEY"]
 
 # Create Flask instance
@@ -36,7 +38,16 @@ login_manager = LoginManager()
 login_manager.login_view = "google.login"
 
 # Create database instance
-db = SQLAlchemy()
+db = SQLAlchemy.create_engine(
+    SQLAlchemy.engine.url.URL(
+        drivername="mysql+pymysql",
+        username=DB_USER,
+        password=DB_PASS,
+        database="donatespacedb",
+        host=DB_IP,
+        port=3306
+    ),
+)
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
