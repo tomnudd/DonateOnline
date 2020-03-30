@@ -22,6 +22,7 @@ body {
 h1 {
     font-family: "DINRoundPro";
     font-weight: bold;
+    font-size: 3.5rem;
 }
 
 #tagline {
@@ -29,7 +30,7 @@ h1 {
     display: inline-block;
     width: fit-content;
     align-self: center;
-    padding-bottom: 2em;
+    padding-bottom: 0.75em;
 }
 
 #tagline p {
@@ -39,6 +40,10 @@ h1 {
     letter-spacing: 0.1em;
     border-right: .15em solid orange;
     animation: typing 2s steps(18, end), blink-caret .9s step-end infinite;
+}
+
+#desc {
+    padding-bottom: 1.5em;
 }
 
 a,
