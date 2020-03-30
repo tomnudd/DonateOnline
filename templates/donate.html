@@ -16,50 +16,44 @@
 <body>
 	<div id="home" class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
 		<main role="main" class="inner cover">
-			<h1 class="cover-heading"></h1>
-            {% if options %}
-            <!-- - - - - - - - - - - - - - - - - - - -->
-            <div id="tagline" class="lead">
-				<p>Give or take?</p>
-			</div>
-            <p class="lead"><a href="./donate" class="btn btn-lg btn-secondary">
-				Give
-			</a></p>
-            <p class="lead"><a href="./receive" class="btn btn-lg btn-secondary">
-				Take
-			</a></p>
-            <!-- - - - - - - - - - - - - - - - - - - -->
-            {% else %}
-            <!-- - - - - - - - - - - - - - - - - - - -->
 			<div id="tagline" class="lead">
-				<p>Hi {{name}}. Where are you based?</p>
-			</div>
-			<p id="desc">This information will be used to find people near you.</p>
-            <p id="err" style="display: none">Error! Please provide a more specific address.</p>
+				<p>What would you like to donate?</p>
+			</div><br/>
+            {% if msg=="Error" %}
+            <p id="err" style="display: inline">Error! Please provide more information.</p><br/>
+            {% elif msg=="Success"%}
+            <p id="succ" style="display: inline">Submitted successfully!</p><br/>
+            {% endif %}
             <script type="text/javascript">
             $(document).ready(function() {
                 $("form").on("submit", function(event) {
                     $.ajax({
-                        url: "/api/address",
+                        url: "/donate",
                         data: $("form").serializeArray(),
                         type: "POST",
                         success: function(response) {
                             if JSON.stringify(response)["Message"] == "Error" {
                                 $("#err").css("display","inline");
+                                $("#succ").css("display","none");
+                            } else {
+                                $("#succ").css("display","inline");
+                                $("#err").css("display","none");
                             }
                         }
                     })
                 });
             });
             </script>
-            <form action="{{ url_for("receiveAddress") }}" class="form-inline" method="post"
+            <form action="{{ url_for("makeDonation") }}" class="form-inline" method="post"
                     role="form" enctype="application/json" style="width: min-content; display: inline">
-                <input type="text" class="form-control" id="address" name="address" style="margin-bottom: 1em">
+                <input type="text" class="form-control" id="name" name="name" style="margin-bottom: 0.5em" placeholder="Item name">
+                <br/>
+                <input type="text" class="form-control" id="desc" name="desc" style="margin-bottom: 0.5em" placeholder="Item description">
+                <br/>
+                <input type="text" class="form-control" id="contact" name="contact" style="margin-bottom: 1em" placeholder="Enter contact information">
                 <br/>
                 <button type="submit" class="btn btn-lg btn-secondary">Submit</button>
             </form>
-            <!-- - - - - - - - - - - - - - - - - - - -->
-            {% endif %}
 		</main>
 	</div>
 </body>
