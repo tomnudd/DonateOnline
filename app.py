@@ -4,7 +4,7 @@
 ### ### ### # IMPORTS # ### ### ###
 ### ### ### ### ### ### ### ### ###
 
-from flask import Flask, redirect, url_for, render_template
+from flask import Flask, redirect, url_for, render_template, request, Response
 from flask_dance.contrib.google import make_google_blueprint, google
 from flask_dance.consumer import oauth_authorized
 from flask_dance.consumer.storage.sqla import SQLAlchemyStorage, OAuthConsumerMixin
@@ -40,6 +40,7 @@ db = SQLAlchemy()
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
     lat = db.Column(db.String, nullable=True)
     lng = db.Column(db.String, nullable=True)
 
@@ -79,19 +80,18 @@ def google_logged_in(blueprint, token):
     query = OAuth.query.filter_by(user_id=user_id)
     try:
         oauth = query.one()
-    except Exception as e:
+    except Exception:
         oauth = OAuth(user_id=user_id, provider="google", token=token)
  
-    print(oauth.user)
     if oauth.user:
         login_user(oauth.user)
-
     else:
-        user = User()
+        user = User(name=info["given_name"])
         oauth.user = user
         db.session.add_all([user, oauth])
         db.session.commit()
         login_user(user)
+
     return False
 
 
@@ -104,10 +104,38 @@ def google_logged_in(blueprint, token):
 def index():
     return render_template("index.html")
 
+@app.route("/explore", methods=["GET"])
+def explore():
+    if not current_user.is_authenticated:
+        return redirect(url_for("google.login"))
+    else:
+        if current_user.lat:
+            return render_template("explore.html", name=current_user.name, options=True)
+        else:
+            return render_template("explore.html", name=current_user.name, options=False)
+
+@app.route("/api/address", methods=["POST"])
+def receiveAddress():
+    address = request.form.get("address")
+    if not address:
+        return Response("Error")
+    coords = getCoordinates(address)
+    if len(coords) == 1:
+        pushCoords(coords, current_user.id)
+        return redirect(url_for("explore"))
+    return Response("Error")
+
 def getCoordinates(address):
     if address and len(address) > 3:
         rsp = gmaps.geocode(address)
         return rsp
+
+def pushCoords(coords, id):
+    coords = coords[0]["geometry"]["location"]
+    user = User.query.filter_by(id=id).first()
+    user.lat = coords["lat"]
+    user.lng = coords["lat"]
+    db.session.commit()
 
 db.init_app(app)
 login_manager.init_app(app)

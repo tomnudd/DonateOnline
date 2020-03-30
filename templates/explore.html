@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<!-- Required meta tags -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+	
+	<link href="{{ url_for("static",filename="styles/style.css") }}" rel="stylesheet" type="text/css"/>
+	<link href="{{ url_for("static",filename="assets/homeFont.css") }}" rel="stylesheet" type="text/css"/>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body>
+	<div id="home" class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+		<main role="main" class="inner cover">
+			<h1 class="cover-heading"></h1>
+            {% if options %}
+            <!-- - - - - - - - - - - - - - - - - - - -->
+            ok.
+            <!-- - - - - - - - - - - - - - - - - - - -->
+            {% else %}
+            <!-- - - - - - - - - - - - - - - - - - - -->
+			<div id="tagline" class="lead">
+				<p>Hi {{name}}. Where are you based?</p>
+			</div>
+			<p id="desc">This information will be used to find people near you.</p>
+            <p id="err" style="display: none">Error! Please provide a more specific address.</p>
+            <script type="text/javascript">
+            $(document).ready(function() {
+                $("form").on("submit", function(event) {
+                    $.ajax({
+                        url: "/api/address",
+                        data: $("form").serializeArray(),
+                        type: "POST",
+                        success: function(response) {
+                            if JSON.stringify(response) == "Error" {
+                                $("#err").css("display","inline");
+                            }
+                        }
+                    })
+                });
+            });
+            </script>
+            <form action="{{ url_for("receiveAddress") }}" class="form-inline" method="post"
+                    role="form" enctype="application/json" style="width: min-content; display: inline">
+                <input type="text" class="form-control" id="address" name="address" style="margin-bottom: 1em">
+                <br/>
+                <button type="submit" class="btn btn-lg btn-secondary">Submit</button>
+            </form>
+            <!-- - - - - - - - - - - - - - - - - - - -->
+            {% endif %}
+		</main>
+	</div>
+</body>
