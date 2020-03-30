@@ -20,7 +20,13 @@
 			</div>
 			<p id="desc">Help share with those who need it most,<br/>
 			and look for what you need most.</p>
-			<p class="lead"><a href="#" class="btn btn-lg btn-secondary">Begin</a></p>
+			<p class="lead"><a href="#" class="btn btn-lg btn-secondary">
+			{% if auth %}
+			Explore
+			{% else %}
+			Begin
+			{% endif %}
+			</a></p>
 		</main>
 	</div>
 </body>

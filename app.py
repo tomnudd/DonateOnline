@@ -4,7 +4,7 @@
 ### ### ### # IMPORTS # ### ### ###
 ### ### ### ### ### ### ### ### ###
 
-from flask import Flask, redirect, url_for
+from flask import Flask, redirect, url_for, render_template
 from flask_dance.contrib.google import make_google_blueprint, google
 import os
 from pymongo import MongoClient
@@ -49,7 +49,8 @@ def index():
         return redirect(url_for("google.login"))
     resp = google.get("/oauth2/v3/userinfo")
     assert resp.ok, resp.text
-    return resp.json()
+    #return resp.json()
+    return render_template("index.html", auth=google.authorized)
 
 if __name__ == "__main__":
     app.run()
